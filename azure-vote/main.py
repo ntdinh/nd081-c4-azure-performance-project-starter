@@ -8,7 +8,7 @@ import logging
 from datetime import datetime
 
 # App Insights
-# TODO: Import required libraries for App Insights fd
+# TODO: Import required libraries for App Insights
 from opencensus.ext.azure.log_exporter import AzureLogHandler, AzureEventHandler
 from opencensus.ext.azure import metrics_exporter
 from opencensus.ext.azure.trace_exporter import AzureExporter
@@ -17,26 +17,26 @@ from opencensus.trace.tracer import Tracer
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 
 
-app_insights_connection = 'InstrumentationKey=58cbca2a-cf8f-4e06-97a1-dc0dc7124a11;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=12e066a3-bdc1-4d6a-9466-6bcc57894832'
+app_insights_conn_string = 'InstrumentationKey=58cbca2a-cf8f-4e06-97a1-dc0dc7124a11;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=12e066a3-bdc1-4d6a-9466-6bcc57894832'
 
-# Logging 
+# Logging
 # TODO: Setup logger
 logger = logging.getLogger(__name__)
-logger.addHandler(AzureLogHandler(connection_string=app_insights_connection))
-logger.addHandler(AzureEventHandler(connection_string=app_insights_connection))
+logger.addHandler(AzureLogHandler(connection_string=app_insights_conn_string))
+logger.addHandler(AzureEventHandler(connection_string=app_insights_conn_string))
 
 
 # Metrics
-# TODO: Setup exporter ss
+# TODO: Setup exporter
 exporter = metrics_exporter.new_metrics_exporter(
     enable_standard_metrics=True,
-    connection_string=app_insights_connection)
+    connection_string=app_insights_conn_string)
 
 
-# Tracingy
+# Tracing
 # TODO: Setup tracer
 tracer = Tracer(
-    exporter=AzureExporter(connection_string=app_insights_connection),
+    exporter=AzureExporter(connection_string=app_insights_conn_string),
     sampler=ProbabilitySampler(1.0))
 
 app = Flask(__name__)
@@ -45,7 +45,7 @@ app = Flask(__name__)
 # TODO: Setup flask middleware
 middleware =  FlaskMiddleware(
     app,
-    exporter=AzureExporter(connection_string=app_insights_connection),
+    exporter=AzureExporter(connection_string=app_insights_conn_string),
     sampler=ProbabilitySampler(rate=1.0))
 
 # Load configurations from environment or config file
@@ -66,8 +66,8 @@ if ("TITLE" in os.environ and os.environ['TITLE']):
 else:
     title = app.config['TITLE']
 
-# Redis Connection c
-# r = redis.Redis()
+# Redis Connection
+r = redis.Redis()
 
 # Change title to host name to demo NLB
 if app.config['SHOWHOST'] == "true":
